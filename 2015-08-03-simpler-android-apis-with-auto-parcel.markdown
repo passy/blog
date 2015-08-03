@@ -92,19 +92,15 @@ This is by design so you have flexibility in the interface you expose. This is v
 We do this by adding a concrete method to our otherwise abstract `ChooserConfig` class:
 
 ```java
-@AutoParcel.Builder
-public abstract static class Builder {
-    public abstract Builder newDirectoryName(String s);
-    public abstract Builder initialDirectory(String s);
-    public abstract Builder allowReadOnlyDirectory(boolean b);
-    public abstract Builder allowNewDirectoryNameModification(boolean b);
-    public abstract ChooserConfig build();
+public static Builder builder() {
+    return new AutoParcel_ChooserConfig.Builder()
+            .initialDirectory("")
+            .allowNewDirectoryNameModification(false)
+            .allowReadOnlyDirectory(false);
 }
 ```
 
-This may look a bit repetitive, but this way we have more control about the fields we actually want to expose through the builder to the user. In this example, there’s a 1:1 correspondence, but you can easily imagine cases where you have private state that the caller of your builder is not supposed to control.
-
-Remember all of this happens at compile-time, so you’ll see compilation errors rather than runtime exceptions if you make a typo while writing your builder, for instance.
+Here, we also use this to set some default options for our Builder. A significant benefit of generated builders is how they check for non-optional fields at construction time and raise exceptions if any have been missed. The generated code for these checks is very efficient and uses a BitSet under the hood to keep track of the values set.
 
 ## Aaand, action!
 
